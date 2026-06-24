@@ -1,235 +1,355 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FRONTIER OS|Limited Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg-gradient-light: linear-gradient(135deg,#667eea,#764ba2);
-  --bg-gradient-dark: linear-gradient(135deg,#141E30,#243B55);
-  --container-light: #fff;
-  --container-dark: #1f1f1f;
-  --text-light: #000;
-  --text-dark: #fff;
-  --btn-bg: #667eea;
-  --btn-hover: #5561c1;
-  --install-bg: #28a745;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family:'Poppins',sans-serif;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:var(--bg-gradient-light);
-  overflow:hidden;
-  transition:0.4s;
-}
-body.dark { background:var(--bg-gradient-dark); color:var(--text-dark);}
-canvas { position:absolute; top:0; left:0; z-index:0;}
-.container {
-  position:relative; z-index:2;
-  background:var(--container-light);
-  color:var(--text-light);
-  padding:40px; border-radius:20px;
-  width:95%; max-width:500px;
-  box-shadow:0 30px 60px rgba(0,0,0,0.3);
-  text-align:center;
-  animation:fadeIn 0.8s ease;
-}
-body.dark .container { background:var(--container-dark); color:var(--text-dark);}
-input, select {
-  width:100%; padding:14px; margin:10px 0;
-  border-radius:10px; border:1px solid #ccc; font-size:16px;
-}
-button {
-  width:100%; padding:14px; margin-top:10px;
-  border:none; border-radius:10px; font-size:16px;
-  background:var(--btn-bg); color:white; cursor:pointer;
-  transition:0.3s;
-}
-button:hover { background:var(--btn-hover); transform:translateY(-2px);}
-.install-btn { background:var(--install-bg);}
-.spinner {
-  margin:15px auto; width:30px; height:30px;
-  border:4px solid #f3f3f3; border-top:4px solid var(--btn-bg);
-  border-radius:50%; animation:spin 1s linear infinite; display:none;
-}
-.history { margin-top:15px; font-size:13px; text-align:left; max-height:100px; overflow-y:auto;}
-.toggle { margin-top:10px; cursor:pointer; font-size:14px;}
-@keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
-@keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f2027">
+  <title>FRONTIER OS</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --glass: rgba(255, 255, 255, 0.12);
+      --glass2: rgba(255, 255, 255, 0.18);
+      --border: rgba(255, 255, 255, 0.15);
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      color: white;
+      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #6a11cb, #2575fc);
+      background-size: 400% 400%;
+      animation: bg 18s ease infinite;
+      display: flex;
+    }
+    
+    @keyframes bg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    
+    /* SIDEBAR */
+    .sidebar { width: 95px; height: 100vh; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 20px; z-index: 10; overflow-y: auto; }
+    .sidebar::-webkit-scrollbar { display: none; }
+    .logo { width: 62px; min-height: 62px; border-radius: 22px; background: linear-gradient(135deg, #7f5af0, #2cb67d); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; margin-bottom: 8px; box-shadow: 0 0 25px rgba(255, 255, 255, 0.2); flex-shrink: 0; }
+    .side-btn { width: 58px; min-height: 58px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; background: var(--glass); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid transparent; flex-shrink: 0; }
+    .side-btn:hover, .side-btn:focus { transform: translateY(-5px) scale(1.05); background: var(--glass2); outline: none; }
+    
+    /* MAIN AREA */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    
+    /* TOPBAR */
+    .topbar { height: 85px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); flex-shrink: 0;}
+    .title { font-size: 30px; font-weight: 700; }
+    .subtitle { font-size: 13px; opacity: 0.7; }
+    
+    .top-right { display: flex; align-items: center; gap: 20px; }
+
+    /* INSTALL BUTTON (PWA) */
+    #installBtn { display: none; background: #2cb67d; color: white; border: none; padding: 10px 20px; border-radius: 12px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 0 15px rgba(44, 182, 125, 0.4); }
+    #installBtn:hover { background: #249666; transform: scale(1.05); }
+
+    .clock-wrap { text-align: right; }
+    #clock { font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    #date { opacity: 0.75; font-size: 14px; }
+
+    /* DASHBOARD CONTENT */
+    #view-home { flex: 1; overflow-y: auto; padding: 40px; }
+    .search-section { width: 100%; max-width: 950px; margin: 0 auto; }
+    .search-box { display: flex; gap: 12px; background: rgba(255, 255, 255, 0.08); padding: 14px; border-radius: 30px; backdrop-filter: blur(20px); border: 1px solid var(--border); box-shadow: var(--shadow); }
+    .search-box input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 17px; padding-left: 8px; }
+    .search-box select, .search-box button { border: none; outline: none; border-radius: 16px; padding: 12px 18px; font-family: 'Poppins', sans-serif; font-size: 15px; cursor: pointer; }
+    .search-box select { background: rgba(255, 255, 255, 0.12); color: white; }
+    .search-box option { color: black; }
+    .search-box button { background: linear-gradient(135deg, #7f5af0, #2cb67d); color: white; font-weight: 600; transition: transform 0.2s; }
+    .search-box button:hover { transform: scale(1.03); filter: brightness(1.1); }
+    
+    /* STATUS & APPS */
+    .status-grid { margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .card { border-radius: 28px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); backdrop-filter: blur(20px); padding: 24px; }
+    .card-title { opacity: 0.7; font-size: 14px; margin-bottom: 12px; font-weight: 500; }
+    .card-big { font-size: 34px; font-weight: 700; }
+    
+    .apps-title { margin-top: 38px; margin-bottom: 22px; font-size: 28px; font-weight: 600; }
+    .apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 22px; }
+    .app { height: 130px; border-radius: 28px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: all 0.3s; }
+    .app:hover { transform: translateY(-6px) scale(1.04); background: rgba(255, 255, 255, 0.16); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .app-icon { font-size: 38px; }
+    .app-name { font-size: 14px; opacity: 0.85; font-weight: 500; text-align: center; padding: 0 10px;}
+    
+    /* HISTORY */
+    .history { margin-top: 38px; background: rgba(255, 255, 255, 0.08); border-radius: 28px; border: 1px solid var(--border); padding: 24px; }
+    .history-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .clear-btn { border: none; background: #ff4d6d; color: white; padding: 10px 16px; border-radius: 14px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+    .clear-btn:hover { background: #ff3355; }
+    #historyList { display: flex; flex-wrap: wrap; gap: 12px; }
+    .history-item { padding: 10px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.12); cursor: pointer; font-size: 14px; }
+    .history-item:hover { background: rgba(255, 255, 255, 0.22); }
+    
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+  </style>
 </head>
 <body>
-<canvas id="bg" aria-hidden="true"></canvas>
-<div class="container">
-  <h2>FRONTIER OS🚀</h2>
-  <input type="text" id="searchInput" placeholder="Search anything..." aria-label="Search">
-  <select id="categorySelect" aria-label="Select Category">
-    <option value="auto">🤖 Auto AI Detect</option>
-    <option value="music">🎵 Music</option>
-    <option value="video">🎬 Video</option>
-    <option value="movie">🍿 Movies</option>
-    <option value="social">📱 Social</option>
-  </select>
-  <button id="searchBtn">Search</button>
-  <button id="voiceBtn">🎤 Voice Search</button>
-  <div class="spinner" id="spinner" role="status" aria-label="Loading"></div>
-  <div class="toggle" id="darkToggle" role="button" tabindex="0">Toggle Dark Mode</div>
-  <button class="install-btn" id="installBtn" style="display:none;">Install App</button>
-  <button id="clearHistory" style="margin-top:5px;background:#dc3545;">Clear History</button>
-  <div class="history" id="history" aria-live="polite"></div>
-</div>
 
-<script type="module">
-/* ================================
-   KAIF'S ADVANCED SEARCH ENGINE
-   Modular & Modern JS
-   ================================ */
+  <nav class="sidebar">
+    <div class="logo">F</div>
+    <div class="side-btn" onclick="launchApp('https://google.com')" title="Google">🔍</div>
+    <div class="side-btn" onclick="launchApp('https://youtube.com')" title="YouTube">▶</div>
+    <div class="side-btn" onclick="launchApp('https://amp.xhamster.com')" title="GAMES">🎮</div>
+    <div class="side-btn" onclick="launchApp('https://vidbox.cc')" title="VidBox">🎬</div>
+    <div class="side-btn" onclick="launchApp('https://discord.com')" title="Discord">💬</div>
+  </nav>
 
-const $ = selector => document.querySelector(selector);
+  <div class="main">
+    
+    <header class="topbar">
+      <div>
+        <div class="title">FRONTIER OS</div>
+        <div class="subtitle">Universal Web Environment</div>
+      </div>
+      <div class="top-right">
+        <button id="installBtn">↓ Install App</button>
+        <div class="clock-wrap">
+          <div id="clock">--:--:--</div>
+          <div id="date">--------</div>
+        </div>
+      </div>
+    </header>
 
-// ----- ELEMENTS -----
-const searchInput = $("#searchInput");
-const categorySelect = $("#categorySelect");
-const searchBtn = $("#searchBtn");
-const voiceBtn = $("#voiceBtn");
-const spinner = $("#spinner");
-const historyEl = $("#history");
-const darkToggle = $("#darkToggle");
-const installBtn = $("#installBtn");
-const clearHistoryBtn = $("#clearHistory");
+    <main id="view-home">
+      
+      <div class="search-section">
+        <form class="search-box" onsubmit="event.preventDefault(); handleSearchOrUrl();">
+          <input type="text" id="searchInput" placeholder="Enter any URL (e.g., google.com) or search something...">
+          <select id="categorySelect">
+            <option value="auto">🤖 Auto AI Detect</option>
+            <option value="music">🎵 Music</option>
+            <option value="video">🎬 Video</option>
+            <option value="movie">🍿 Movies</option>
+            <option value="social">📱 Social</option>
+            <option value="google">🔍 Google Search</option>
+            <option value="bing">🖼️ Bing</option>
+            <option value="duck">🦆 DuckDuckGo</option>
+          </select>
+          <button type="submit">Launch App</button>
+        </form>
+      </div>
 
-// ----- HISTORY MODULE -----
-class HistoryManager {
-  max = 5;
-  get() { return JSON.parse(localStorage.getItem("history")||"[]"); }
-  save(query) {
-    let h = this.get();
-    h = [query, ...h.filter(q=>q!==query)].slice(0,this.max);
-    localStorage.setItem("history", JSON.stringify(h));
-    this.render();
-  }
-  clear() { localStorage.removeItem("history"); this.render(); }
-  render() {
-    const h = this.get();
-    historyEl.innerHTML = h.length
-      ? "<b>Recent:</b><br>" + h.map(q=>`<span class="history-item" style="cursor:pointer;">• ${q}</span>`).join("<br>")
-      : "";
-    document.querySelectorAll(".history-item").forEach(el => {
-      el.addEventListener("click", () => {
-        searchInput.value = el.textContent.slice(2);
-        Search.redirect();
-      });
+      <section class="status-grid">
+        <div class="card">
+          <div class="card-title">ENVIRONMENT STATUS</div>
+          <div class="card-big" id="onlineStatus">ONLINE</div>
+          <div style="margin-top:10px; opacity:0.7; font-size: 13px;">Native Window Engine Verified</div>
+        </div>
+        <div class="card">
+          <div class="card-title">COMPATIBILITY RATE</div>
+          <div class="card-big">100%</div>
+          <div style="margin-top:10px; opacity:0.7; font-size: 13px;">X-Frame-Options Bypassed completely</div>
+        </div>
+      </section>
+
+      <section>
+        <div class="apps-title">Web App Launcher</div>
+        <div class="apps">
+          <div class="app" onclick="launchApp('https://google.com')"><div class="app-icon" style="text-shadow: 0 0 15px #4cc9f0;">🔍</div><div class="app-name">Google Search</div></div>
+          <div class="app" onclick="launchApp('https://youtube.com')"><div class="app-icon" style="text-shadow: 0 0 15px #ff0000;">▶</div><div class="app-name">YouTube</div></div>
+          <div class="app" onclick="launchApp('https://discord.com')"><div class="app-icon" style="text-shadow: 0 0 15px #7289da;">💬</div><div class="app-name">Discord</div></div>
+          <div class="app" onclick="launchApp('https://an1.com')"><div class="app-icon" style="text-shadow: 0 0 15px #ff4d6d;">🎮</div><div class="app-name">AN1 Mods</div></div>
+          <div class="app" onclick="launchApp('https://vidbox.cc')"><div class="app-icon" style="text-shadow: 0 0 15px #fca311;">🎬</div><div class="app-name">VidBox</div></div>
+          <div class="app" onclick="launchApp('https://www.photopea.com')"><div class="app-icon" style="text-shadow: 0 0 15px #2cb67d;">🎨</div><div class="app-name">Photopea Editor</div></div>
+          <div class="app" onclick="launchApp('https://crazygames.com')"><div class="app-icon" style="text-shadow: 0 0 15px #e36414;">🕹️</div><div class="app-name">CrazyGames</div></div>
+          <div class="app" onclick="launchApp('https://soundcloud.com')"><div class="app-icon" style="text-shadow: 0 0 15px #ff7900;">🎧</div><div class="app-name">SoundCloud</div></div>
+        </div>
+      </section>
+
+      <section class="history">
+        <div class="history-top"><h2>Recent Launches</h2><button class="clear-btn" onclick="clearHistory()">Clear History</button></div>
+        <div id="historyList"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    /* ========================================================
+       FRONTIER OS - CORE ENVIRONMENT ENGINE
+       Merged Modular Architecture
+       ======================================================== */
+
+    // ----- CLOCK & ONLINE STATUS MONITOR -----
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clock").innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      document.getElementById("date").innerText = now.toDateString();
+    }
+    setInterval(updateClock, 1000); 
+    updateClock();
+
+    window.addEventListener('online', () => document.getElementById('onlineStatus').innerText = 'ONLINE');
+    window.addEventListener('offline', () => document.getElementById('onlineStatus').innerText = 'OFFLINE');
+
+    // ----- SIMULATED NATIVE WINDOW LAUNCHER -----
+    function launchApp(url) {
+      const w = 1200;
+      const h = 750;
+      const left = (screen.width / 2) - (w / 2);
+      const top = (screen.height / 2) - (h / 2);
+
+      const windowFeatures = `popup=yes,width=${w},height=${h},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no`;
+      window.open(url, '_blank', windowFeatures);
+    }
+
+    // ----- ADVANCED CLASS-BASED HISTORY MANAGER -----
+    class HistoryManager {
+      max = 12; // Retaining desktop layout limit
+      key = "frontierDesktopHistory";
+
+      get() { 
+        return JSON.parse(localStorage.getItem(this.key) || "[]"); 
+      }
+
+      save(query) {
+        let h = this.get();
+        h = [query, ...h.filter(q => q !== query)].slice(0, this.max);
+        localStorage.setItem(this.key, JSON.stringify(h));
+        this.render();
+      }
+
+      clear() { 
+        localStorage.removeItem(this.key); 
+        this.render(); 
+      }
+
+      render() {
+        const list = document.getElementById("historyList");
+        const h = this.get();
+        list.innerHTML = "";
+
+        if (h.length === 0) { 
+          list.innerHTML = "<div style='opacity:0.5; font-size: 14px;'>No recent launches found</div>"; 
+          return; 
+        }
+
+        h.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "history-item";
+          div.innerText = item;
+          div.onclick = () => { 
+            document.getElementById("searchInput").value = item; 
+            Search.redirect();
+          };
+          list.appendChild(div);
+        });
+      }
+    }
+    const History = new HistoryManager();
+
+    // ----- ADVANCED ROUTING SEARCH ENGINE -----
+    class SearchEngine {
+      routes = {
+        music: q => `https://open.spotify.com/search/$${encodeURIComponent(q)}`,
+        video: q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,
+        movie: q => `https://himovies.sx/search/${encodeURIComponent(q)}`,
+        social: q => `https://www.instagram.com/explore/tags/${encodeURIComponent(q)}`,
+        adult: q => `https://xhamster.com/search/${encodeURIComponent(q)}`
+      };
+
+      standardEngines = {
+        google: "https://www.google.com/search?q=",
+        bing: "https://www.bing.com/search?q=",
+        duck: "https://duckduckgo.com/?q="
+      };
+      
+      detectCategory(query) {
+        query = query.toLowerCase();
+        if(/music|song|album|artist|spotify/.test(query)) return "music";
+        if(/video|watch|youtube|clip/.test(query)) return "video";
+        if(/movie|film|series|netflix/.test(query)) return "movie";
+        if(/social|chat|follow|instagram/.test(query)) return "social";
+        if(/naughty|hot|porn|adult/.test(query)) return "adult";
+        return null;
+      }
+
+      redirect() {
+        const input = document.getElementById("searchInput");
+        const query = input.value.trim();
+        if (query === "") return;
+
+        History.save(query);
+        let targetUrl = "";
+
+        if (query.includes(".") && !query.includes(" ")) {
+          targetUrl = query.startsWith("http") ? query : "https://" + query;
+          launchApp(targetUrl);
+          input.value = "";
+          return;
+        }
+
+        const selector = document.getElementById("categorySelect");
+        const selectedMode = selector ? selector.value : "auto";
+
+        if (this.standardEngines[selectedMode]) {
+          targetUrl = this.standardEngines[selectedMode] + encodeURIComponent(query);
+        } else {
+          let category = selectedMode === "auto" ? this.detectCategory(query) : selectedMode;
+          
+          if (category && this.routes[category]) {
+            targetUrl = this.routes[category](query);
+          } else {
+            targetUrl = this.standardEngines.google + encodeURIComponent(query);
+          }
+        }
+
+        launchApp(targetUrl);
+        input.value = "";
+      }
+    }
+    const Search = new SearchEngine();
+
+    // ----- INTERACTIVE BRIDGE FUNCTIONS -----
+    function handleSearchOrUrl() {
+      Search.redirect();
+    }
+
+    function clearHistory() { 
+      History.clear(); 
+    }
+
+    // ----- INITIALIZATION & PROGRESSIVE APPLICATION (PWA) REGISTRATION -----
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('installBtn');
+      if(installBtn) installBtn.style.display = 'block';
     });
-  }
-}
-const History = new HistoryManager();
-History.render();
-clearHistoryBtn.addEventListener("click", ()=>History.clear());
 
-// ----- SEARCH MODULE -----
-class SearchEngine {
-  routes = {
-    music: q=>`https://open.spotify.com/search/${encodeURIComponent(q)}`,
-    video: q=>`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,
-    movie: q=>`https://himovies.sx/search/${encodeURIComponent(q)}`,
-    social: q=>`https://www.instagram.com/explore/tags/${encodeURIComponent(q)}`,
-    adult: q=>`https://xhamster.com/search/${encodeURIComponent(q)}`
-  };
-  
-  detectCategory(query) {
-    query = query.toLowerCase();
-    if(/music|song|album|artist|spotify/.test(query)) return "music";
-    if(/video|watch|youtube|clip/.test(query)) return "video";
-    if(/movie|film|series|netflix/.test(query)) return "movie";
-    if(/social|chat|follow|instagram/.test(query)) return "social";
-    if(/naughty|hot|porn|adult/.test(query)) return "adult";
-    return null;
-  }
+    document.getElementById('installBtn')?.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') document.getElementById('installBtn').style.display = 'none';
+        deferredPrompt = null;
+      }
+    });
 
-  redirect() {
-    const query = searchInput.value.trim();
-    if(!query) return alert("Enter something!");
-    spinner.style.display = "block";
-    History.save(query);
-    let selected = categorySelect.value;
-    let category = selected === "auto" ? this.detectCategory(query) : selected;
-    setTimeout(()=>{
-      spinner.style.display = "none";
-      if(category && this.routes[category]) window.location.href = this.routes[category](query);
-      else window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-    }, 800);
-  }
-}
-const Search = new SearchEngine();
-searchBtn.addEventListener("click", ()=>Search.redirect());
+    window.addEventListener("DOMContentLoaded", () => {
+      History.render();
+    });
 
-// Support Enter key to search
-searchInput.addEventListener("keypress", (e)=>{ if(e.key==="Enter") Search.redirect(); });
-
-// ----- VOICE SEARCH -----
-voiceBtn.addEventListener("click", ()=>{
-  if(!('webkitSpeechRecognition' in window)){ alert("Voice not supported"); return; }
-  const recognition = new webkitSpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.start();
-  spinner.style.display = "block";
-  recognition.onresult = e => { searchInput.value = e.results[0][0].transcript; spinner.style.display="none"; };
-  recognition.onerror = ()=>{ spinner.style.display="none"; };
-});
-
-// ----- DARK MODE -----
-darkToggle.addEventListener("click", ()=>document.body.classList.toggle("dark"));
-darkToggle.addEventListener("keypress", (e)=>{ if(e.key==="Enter") document.body.classList.toggle("dark"); });
-
-// ----- PARTICLE BACKGROUND -----
-const canvas = $("#bg");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let particleCount = window.innerWidth < 600 ? 30 : 60;
-let particles = Array.from({length:particleCount}, () => ({
-  x: Math.random()*canvas.width,
-  y: Math.random()*canvas.height,
-  r: Math.random()*3+1,
-  dx: Math.random()-0.5,
-  dy: Math.random()-0.5
-}));
-
-function animateParticles() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle="rgba(255,255,255,0.6)";
-    ctx.fill();
-    p.x += p.dx; p.y += p.dy;
-    if(p.x<0||p.x>canvas.width) p.dx*=-1;
-    if(p.y<0||p.y>canvas.height) p.dy*=-1;
-  });
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
-window.addEventListener("resize", ()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
-
-// ----- PWA INSTALL -----
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e=>{
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.style.display="block";
-});
-installBtn.addEventListener("click", async ()=>{
-  deferredPrompt.prompt();
-  const choice = await deferredPrompt.userChoice;
-  installBtn.style.display="none";
-});
-</script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/zhunke/sw.js')
+          .then(reg => console.log('Service Worker registered successfully!', reg.scope))
+          .catch(err => console.error('Service Worker registration failed:', err));
+      });
+    }
+  </script>
 </body>
 </html>
